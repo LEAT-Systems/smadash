@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import items, users
-from api.utils.config import settings
+from .api.routes import users
+from .api.utils.config import settings
+from .api.db.database import instantiate_db
 
 def create_application() -> FastAPI:
     """Create FastAPI application."""
@@ -37,6 +38,7 @@ def create_application() -> FastAPI:
 
 
 app = create_application()
+instantiate_db()
 
 if __name__ == "__main__":
     import uvicorn

@@ -25,15 +25,72 @@ A modular FastAPI application with clean separation of concerns.
 │   │   └── services/     # Business logic services
 │   │       ├── __init__.py
 │   │       └── item_service.py
-│   ├── core/             # Core application code
-│   │   ├── __init__.py
-│   │   ├── config.py     # Application configuration
-│   │   └── security.py   # Security utilities
 │   ├── agents/             # Langchain agents code
 │   │   ├── __init__.py
 └── requirements.txt        # Project dependencies
 ```
-
+```
+    graph TD
+      %%=== Onboarding Phase ===%%
+      subgraph Onboarding
+        A1[🔍 Schema Ingestor]
+        A2[🔄 Schema Normalizer]
+        A3[📚 Central Schema Store]
+      end
+      A1 --> A2
+      A2 --> A3
+    
+      %%=== Query Intake & Planning ===%%
+      subgraph QueryFlow
+        U[💬 User NL Query] 
+        QP[🤖 Query Parser (LLM)]
+        PL[🧩 Query Planner]
+        DR[🚦 DB Adapter Router]
+        XE[⚡ Query Executor]
+        CA[🗄️ Cache Layer]
+      end
+      U --> QP
+      A3 --> QP
+      QP --> PL
+      PL --> DR
+      DR --> XE
+      XE --> CA
+      CA --> PL       %% cache hit shortcut
+      XE --> RS[📊 Raw Result Set]
+    
+      %%=== Post-Processing & Visualization ===%%
+      subgraph PostProcess
+        RF[📝 Result Formatter (LLM)]
+        VR[🎨 Viz Recommender (LLM)]
+        RN[🖥️ Renderer]
+      end
+      RS --> RF
+      RS --> VR
+      RF --> RN
+      VR --> RN
+    
+      %%=== Shared Services ===%%
+      subgraph Services
+        LM[🔍 Logging & Metrics]
+        EH[🚨 Error Handler]
+        AC[🔐 Auth & Access Control]
+      end
+    
+      %% service hooks
+      Onboarding & QueryFlow & PostProcess --> LM
+      Onboarding & QueryFlow & PostProcess --> EH
+      U & XE & RN --> AC
+    
+      %% annotate adapters
+      subgraph DR internal
+        DR1[SQL Adapter]
+        DR2[NoSQL Adapter]
+        DR3[GraphDB Adapter]
+      end
+      DR --> DR1
+      DR --> DR2
+      DR --> DR3
+```
 ## Setup
 
 1. Create a virtual environment:
@@ -54,8 +111,11 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Change directory
+```bash
+cd app
+```
 ## Running the Application
-
 ```bash
 uvicorn app.main:app --reload
 ```

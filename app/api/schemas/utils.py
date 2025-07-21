@@ -1,16 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
-class UserCreate(BaseModel):
-    username: str
-    email: str
-    password: str
-
-class User(BaseModel):
-    id: int
-    username: str
-    email: str
-
 class DatabaseConnectionCreate(BaseModel):
     db_type: str
     connection_string: str

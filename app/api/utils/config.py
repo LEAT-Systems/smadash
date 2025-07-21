@@ -1,5 +1,8 @@
 import os
 from typing import List
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Settings:
@@ -22,7 +25,7 @@ class Settings:
 
         # Database configuration
         self.DATABASE_URL: str = os.getenv(
-            "DATABASE_URL", "sqlite:///./app.db"
+            "DATABASE_URL"
         )
 
         # Security
@@ -30,8 +33,8 @@ class Settings:
         self.ALGORITHM: str = "HS256"
         self.ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
-        # Load environment variables from .env file if it exists
-        self._load_env_file()
+        # # Load environment variables from .env file if it exists
+        # self._load_env_file()
 
     def _load_env_file(self):
         """Load environment variables from .env file if it exists."""

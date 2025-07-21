@@ -2,8 +2,6 @@ from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
-from .item import Item
-
 
 # Shared properties
 class UserBase(BaseModel):
@@ -33,7 +31,7 @@ class User(UserBase):
     id: int
     is_active: bool
     is_superuser: bool
-    items: List[Item] = []
+
 
     class Config:
         orm_mode = True
