@@ -6,28 +6,32 @@ A modular FastAPI application with clean separation of concerns.
 
 ```
 .
-├── app/                  # Application package
-│   ├── __init__.py      # Init file
-│   ├── main.py          # FastAPI application entry point
-│   ├── api/             # API routes package
-│   │   ├── __init__.py  
-│   │   ├── dependencies.py  # API dependencies
-│   │   └── routes/      # API route modules
-│   ├── core/            # Core application code
+├── app/                     # Application package
+│   ├── __init__.py         # Init file
+│   ├── main.py             # FastAPI application entry point
+│   ├── api/                # API package
+│   │   ├── __init__.py     
+│   │   ├── dependencies.py # API dependencies
+│   │   ├── routes/        # API route modules
+│   │   │   └── __init__.py
+│   │   ├── db/           # Database related code
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py   # Base DB setup
+│   │   │   └── session.py # DB session management
+│   │   ├── models/       # Database models
+│   │   │   └── __init__.py
+│   │   ├── schemas/      # Pydantic schemas for request/response
+│   │   │   └── __init__.py
+│   │   └── services/     # Business logic services
+│   │       ├── __init__.py
+│   │       └── item_service.py
+│   ├── core/             # Core application code
 │   │   ├── __init__.py
-│   │   ├── config.py    # Application configuration
-│   │   └── security.py  # Security utilities
-│   ├── db/              # Database related code
+│   │   ├── config.py     # Application configuration
+│   │   └── security.py   # Security utilities
+│   ├── agents/             # Langchain agents code
 │   │   ├── __init__.py
-│   │   ├── base.py      # Base DB setup
-│   │   └── session.py   # DB session management
-│   ├── models/          # Database models
-│   │   └── __init__.py
-│   ├── schemas/         # Pydantic schemas for request/response
-│   │   └── __init__.py
-│   └── services/        # Business logic services
-│       └── __init__.py
-└── requirements.txt     # Project dependencies
+└── requirements.txt        # Project dependencies
 ```
 
 ## Setup
