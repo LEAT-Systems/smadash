@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
-from ..models import DatabaseConnectionCreate
-from ..auth.dependencies import get_current_user
-from ..database import pull_schema
-from ..storage import database_connections_db
+from fastapi import APIRouter, Depends
+from ..models. import DatabaseConnectionCreate
+from app.api.utils.dependencies import get_current_user
+from ..services.database_service import pull_schema
+from ..db.storage import database_connections_db
 import uuid
 
 router = APIRouter()

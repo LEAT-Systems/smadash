@@ -1,4 +1,8 @@
+from datetime import datetime
+
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.sql.schema import Column
+from sqlalchemy.sql.sqltypes import Integer, DateTime
 
 
 class CustomBase:
@@ -10,9 +14,9 @@ class CustomBase:
         return cls.__name__.lower()
 
     # Add common columns/methods here
-    # id = Column(Integer, primary_key=True, index=True)
-    # created_at = Column(DateTime, default=datetime.utcnow)
-    # updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 Base = declarative_base(cls=CustomBase)

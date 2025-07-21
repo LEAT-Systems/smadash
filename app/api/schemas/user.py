@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
-from app.api.schemas.item import Item
+from .item import Item
 
 
 # Shared properties

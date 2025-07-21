@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ..models import UserCreate
 from .dependencies import get_password_hash, verify_password, create_access_token
 from ..storage import users_db
-from ..config import ACCESS_TOKEN_EXPIRE_MINUTES
+from app.api.utils.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from datetime import timedelta
 
 router = APIRouter()

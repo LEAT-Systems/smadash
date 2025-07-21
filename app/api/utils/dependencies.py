@@ -3,8 +3,8 @@ from typing import Generator
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from app.api.db import SessionLocal
-from app.api.services.user_service import UserService
+from ..db.session import SessionLocal
+from ..services.user_service import UserService
 
 # OAuth2 token URL
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"/api/v1/auth/login")

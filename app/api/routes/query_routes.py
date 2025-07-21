@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from ..models import QueryRequest, QueryResponse
 from app.api.services.auth_service import get_current_user
-from ..storage import database_connections_db
-from ..utils.query_generator import generate_sql
+from app.api.db.storage import database_connections_db
+from app.api.services.query_generator_service import generate_sql
 from sqlalchemy import create_engine
 
 router = APIRouter()

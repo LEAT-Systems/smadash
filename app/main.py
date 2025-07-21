@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import items, users
-from app.core.config import settings
+from api.routes import items, users
+from api.utils.config import settings
 
 def create_application() -> FastAPI:
     """Create FastAPI application."""
@@ -26,7 +26,7 @@ def create_application() -> FastAPI:
 
     # Include routers
     application.include_router(users.router, prefix=settings.API_V1_STR)
-    application.include_router(items.router, prefix=settings.API_V1_STR)
+    #application.include_router(items.router, prefix=settings.API_V1_STR)
 
     @application.get("/")
     def root():

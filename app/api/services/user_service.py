@@ -2,9 +2,9 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
-from app.api.models.user import User
-from app.api.schemas.user import UserCreate, UserUpdate
+from ..utils.security import get_password_hash
+from ..models.user import User
+from ..schemas.user import UserCreate, UserUpdate
 
 
 class UserService:
