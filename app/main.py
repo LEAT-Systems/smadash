@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from .api.routes import users
 from .api.utils.config import settings
 from .api.db.database import instantiate_db
