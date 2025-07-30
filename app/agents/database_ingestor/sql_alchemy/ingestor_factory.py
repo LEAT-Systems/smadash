@@ -1,5 +1,5 @@
 from app.agents.database_ingestor.interfaces import  DatabaseIngestorInterface
-from app.agents.schemas.database_connection_schema import DatabaseType
+from app.agents.utils.database_connection_schema import DatabaseType
 from .ingestor import SQLAlchemyIngestor
 
 class DatabaseIngestorFactory:

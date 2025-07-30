@@ -1,5 +1,5 @@
 from interfaces import ConnectionConfig
-from app.agents.schemas import DatabaseType
+from app.agents.utils import DatabaseType
 from sql_alchemy import DatabaseIngestorFactory
 from sql_alchemy import DatabaseIngestionPipeline
 
@@ -20,10 +20,10 @@ def main():
 
     target_config = ConnectionConfig(
         host="localhost",
-        port=5432,
-        database="target_db",
-        username="user",
-        password="password",
+        port=5433,
+        database="smadash",
+        username="postgres",
+        password="_SolidLea_01",
         db_type=DatabaseType.POSTGRESQL,
         additional_params={
             'sslmode': 'prefer'
@@ -41,7 +41,7 @@ def main():
         if ingestor.connect(source_config):
             print("🔍 Discovering schema...")
 
-            tables = ingestor.discover_schema()
+            tables = ingestor.discover_tables()
             print(f"Found {len(tables)} tables:")
 
             for table in tables[:5]:  # Show first 5 tables
@@ -65,7 +65,7 @@ def main():
     plan = pipeline.create_ingestion_plan(
         source_config=source_config,
         target_config=target_config,
-        table_filters=['users', 'orders']  # Optional filter
+        # table_filters=['users', 'orders']  # Optional filter
     )
 
     print(f"Plan created:")
@@ -82,14 +82,14 @@ def main():
 
     # Execute ingestion
     print("\n🚀 Starting ingestion...")
-    result = pipeline.execute_ingestion(plan, progress_callback)
+    result, schema = pipeline.execute_ingestion(plan, progress_callback)
 
     print(f"\n✅ Ingestion completed!")
     print(f"  - Status: {result['status']}")
     print(f"  - Tables processed: {result['tables_processed']}/{result['total_tables']}")
     print(f"  - Rows processed: {result['statistics']['total_rows_processed']:,}")
     print(f"  - Processing rate: {result['statistics']['processing_rate_rows_per_second']:.1f} rows/sec")
-
+    print(schema)
     if result['errors']:
         print(f"  - Errors: {len(result['errors'])}")
         for error in result['errors'][:3]:  # Show first 3 errors

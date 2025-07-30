@@ -4,7 +4,8 @@ from datetime import datetime
 import logging
 from app.agents.database_ingestor.interfaces import DatabaseIngestionPipelineInterface, ConnectionConfig
 from .ingestor_factory import DatabaseIngestorFactory
-from app.agents.schemas.mysql_normalizer import DataNormalizer
+from app.agents.utils.database_normalizer import DataNormalizer
+from app.agents.utils.database_connection_schema import DatabaseType
 
 class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
     def __init__(self):
@@ -27,7 +28,7 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
             raise RuntimeError("Failed to connect to source database")
 
         try:
-            all_tables = source_ingestor.discover_schema()
+            all_tables = source_ingestor.discover_tables()
 
             # Filter tables if specified
             if table_filters:
@@ -46,7 +47,8 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
                     'host': source_config.host,
                     'port': source_config.port,
                     'database': source_config.database,
-                    'username': source_config.username
+                    'username': source_config.username,
+                    'password': source_config.password
                     # Note: password not included in plan for security
                 },
                 'target_config': {
@@ -54,7 +56,8 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
                     'host': target_config.host,
                     'port': target_config.port,
                     'database': target_config.database,
-                    'username': target_config.username
+                    'username': target_config.username,
+                    'password': source_config.password
                 },
                 'tables_to_process': [
                     {
@@ -91,7 +94,7 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
             source_ingestor.disconnect()
 
     def execute_ingestion(self, plan: Dict[str, Any],
-                          progress_callback: Optional[callable] = None) -> Dict[str, Any]:
+                          progress_callback: Optional[callable] = None) -> tuple[Dict[str, Any], Dict[str, Any]]:
 
         execution_id = str(uuid.uuid4())
         start_time = datetime.now()
@@ -134,6 +137,7 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
 
             if not target_ingestor.connect(target_config):
                 raise RuntimeError("Failed to connect to target database")
+            schema_summary = self._extract_schema_for_llm(source_ingestor, source_config)
 
             try:
                 # Process each table
@@ -203,7 +207,7 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
             execution_status['errors'].append(str(e))
             self.logger.error(f"Ingestion failed: {e}")
 
-        return execution_status
+        return execution_status, schema_summary
 
     def _process_table(self, source_ingestor, target_ingestor, table_info: Dict[str, Any],
                        normalization_rules: List[Dict[str, Any]], execution_status: Dict[str, Any]) -> Dict[str, Any]:
@@ -214,7 +218,6 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
 
         # Get table metadata
         table_metadata = source_ingestor.get_table_metadata(table_name)
-
         # Validate data integrity
         validation_results = source_ingestor.validate_data_integrity(table_name)
         if validation_results['errors']:
@@ -296,7 +299,7 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
             port=config_dict['port'],
             database=config_dict['database'],
             username=config_dict['username'],
-            password="",  # Would need to be retrieved securely
+            password=config_dict['password'],  # Would need to be retrieved securely
             db_type=DatabaseType(config_dict['db_type'])
         )
 
@@ -312,3 +315,61 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
     def _estimate_processing_time(self, row_count: int) -> float:
         # Simple estimation: 1000 rows per minute
         return max(1.0, row_count / 1000.0)
+
+    def _extract_schema_for_llm(self, ingestor, source_config) -> dict:
+        """Extract comprehensive schema information for LLM consumption."""
+        try:
+
+            # Get complete schema information
+            tables = ingestor.discover_tables()
+
+            # Structure for LLM consumption
+            schema_info = {
+                "database_name": source_config.database,
+                "database_type": source_config.db_type.value,
+                "tables": [],
+                "relationships": [],
+                "table_count": len(tables),
+                "generated_at": datetime.now().isoformat()
+            }
+
+            # Process each table
+            for table in tables:
+                table_info = {
+                    "name": table.name,
+                    "schema": table.schema,
+                    "row_count": table.row_count,
+                    "columns": [
+                        {
+                            "name": col["name"],
+                            "type": col["type"],
+                            "nullable": col["nullable"],
+                            "primary_key": col["name"] in table.primary_keys,
+                            "default": col.get("default")
+                        }
+                        for col in table.columns
+                    ],
+                    "primary_keys": table.primary_keys,
+                    "foreign_keys": table.foreign_keys,
+                    "indexes": table.indexes
+                }
+                schema_info["tables"].append(table_info)
+
+                # Extract relationships
+                for fk in table.foreign_keys:
+                    relationship = {
+                        "from_table": table.name,
+                        "from_column": fk["constrained_columns"][0],
+                        "to_table": fk["referred_table"],
+                        "to_column": fk["referred_columns"][0],
+                        "relationship_type": "foreign_key"
+                    }
+                    schema_info["relationships"].append(relationship)
+
+            return schema_info
+        except Exception as e:
+            self.logger.error(f"Failed to extract schema information: {e}")
+            return {}
+        #
+        # finally:
+        #     ingestor.disconnect()

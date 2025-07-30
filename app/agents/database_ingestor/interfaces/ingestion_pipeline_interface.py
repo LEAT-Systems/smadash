@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any
-from app.agents.schemas import ConnectionConfig
+from app.agents.utils import ConnectionConfig
 
 
 class DatabaseIngestionPipelineInterface(ABC):

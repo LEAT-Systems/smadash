@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any
-from app.agents.schemas import ConnectionConfig, TableMetadata, NormalizationRule
+from app.agents.utils import ConnectionConfig, TableMetadata, NormalizationRule
 
 
 class DatabaseIngestorInterface(ABC):
@@ -37,7 +37,7 @@ class DatabaseIngestorInterface(ABC):
         pass
 
     @abstractmethod
-    def discover_schema(self) -> List[TableMetadata]:
+    def discover_tables(self) -> List[TableMetadata]:
         """
         Discover and extract metadata from all tables in the database.
         

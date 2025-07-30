@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Any, Generator
 import logging
 from datetime import datetime
 from app.agents.database_ingestor.interfaces import DatabaseIngestorInterface, ConnectionConfig, TableMetadata
-from app.agents.schemas.database_connection_schema import DatabaseType
+from app.agents.utils.database_connection_schema import DatabaseType
 
 class SQLAlchemyIngestor(DatabaseIngestorInterface):
     def __init__(self):
@@ -81,7 +81,7 @@ class SQLAlchemyIngestor(DatabaseIngestorInterface):
         except SQLAlchemyError:
             return False
 
-    def discover_schema(self) -> List[TableMetadata]:
+    def discover_tables(self) -> List[TableMetadata]:
         if not self.engine:
             raise RuntimeError("Not connected to database")
 

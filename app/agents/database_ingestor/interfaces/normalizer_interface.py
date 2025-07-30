@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import List, Dict, Any
 
-from app.agents.schemas import TableMetadata, NormalizationRule
+from app.agents.utils import TableMetadata, NormalizationRule
 
 
 class DatabaseNormalizerInterface(ABC):
