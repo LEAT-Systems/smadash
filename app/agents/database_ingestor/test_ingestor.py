@@ -10,18 +10,6 @@ load_dotenv()
 
 def main():
     # Configure databases using SQLAlchemy
-    # source_config = ConnectionConfig(
-    #     host="localhost",
-    #     port=5433,
-    #     database="articles_db",
-    #     username="postgres",
-    #     password="_SolidLea_01",
-    #     db_type=DatabaseType.POSTGRESQL,
-    #     additional_params={
-    #         'charset': 'utf8mb4',
-    #         'pool_recycle': 3600
-    #     }
-    # )
     source_config = ConnectionConfig(
         host="",
         port=0,
