@@ -37,7 +37,7 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
                 tables_to_process = all_tables
 
             # Analyze normalization needs
-            normalization_rules = self.normalizer.analyze_normalization_needs(tables_to_process)
+           # normalization_rules = self.normalizer.analyze_normalization_needs(tables_to_process)
 
             plan = {
                 'plan_id': plan_id,
@@ -57,7 +57,7 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
                     'port': target_config.port,
                     'database': target_config.database,
                     'username': target_config.username,
-                    'password': source_config.password
+                    'password': target_config.password
                 },
                 'tables_to_process': [
                     {
@@ -72,13 +72,13 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
                     for table in tables_to_process
                 ],
                 'normalization_rules': [
-                    {
-                        'table_name': rule.table_name,
-                        'column_name': rule.column_name,
-                        'rule_type': rule.rule_type,
-                        'parameters': rule.parameters
-                    }
-                    for rule in normalization_rules
+                    # {
+                    #     'table_name': rule.table_name,
+                    #     'column_name': rule.column_name,
+                    #     'rule_type': rule.rule_type,
+                    #     'parameters': rule.parameters
+                    # }
+                    # for rule in normalization_rules
                 ],
                 'total_estimated_time_minutes': sum(
                     self._estimate_processing_time(table.row_count)
@@ -98,6 +98,8 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
 
         execution_id = str(uuid.uuid4())
         start_time = datetime.now()
+
+        schema_summary = {}
 
         execution_status = {
             'execution_id': execution_id,

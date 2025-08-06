@@ -1,17 +1,22 @@
+import os
 from interfaces import ConnectionConfig
 from app.agents.utils import DatabaseType
 from sql_alchemy import DatabaseIngestorFactory
 from sql_alchemy import DatabaseIngestionPipeline
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 def main():
     # Configure databases using SQLAlchemy
     source_config = ConnectionConfig(
-        host="localhost",
-        port=5433,
-        database="articles_db",
-        username="postgres",
-        password="_SolidLea_01",
-        db_type=DatabaseType.POSTGRESQL,
+        host="",
+        port=0,
+        database="ticketing_platform.db",
+        username= os.environ.get('USERNAME_SOURCE'),
+        password=os.environ.get('PASSWORD_SOURCE'),
+        db_type=DatabaseType.SQLITE,
         additional_params={
             'charset': 'utf8mb4',
             'pool_recycle': 3600
@@ -22,8 +27,8 @@ def main():
         host="localhost",
         port=5433,
         database="smadash",
-        username="postgres",
-        password="_SolidLea_01",
+        username=os.environ.get('USERNAME_DEST'),
+        password=os.environ.get('PASSWORD_DEST'),
         db_type=DatabaseType.POSTGRESQL,
         additional_params={
             'sslmode': 'prefer'
