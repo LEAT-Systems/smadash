@@ -1,7 +1,8 @@
 import os
+
+from app.agents.database_ingestor import DatabaseIngestorFactory
 from interfaces import ConnectionConfig
 from app.agents.utils import DatabaseType
-from sql_alchemy import DatabaseIngestorFactory
 from sql_alchemy import DatabaseIngestionPipeline
 
 from dotenv import load_dotenv
@@ -10,13 +11,25 @@ load_dotenv()
 
 def main():
     # Configure databases using SQLAlchemy
+    # source_config = ConnectionConfig(
+    #     host="mongodb+srv://dev:mnz8lFezoVQBDg4C@plugin.5c9kl5i.mongodb.net/Plugin?retryWrites=true&w=majority",
+    #     # port=27017,
+    #     # database="smadash",
+    #     # username= os.environ.get('USERNAME_SOURCE'),
+    #     # password=os.environ.get('PASSWORD_SOURCE'),
+    #     db_type=DatabaseType.MONGODB,
+    #     additional_params={
+    #         'charset': 'utf8mb4',
+    #         'pool_recycle': 3600
+    #     }
+    # )
     source_config = ConnectionConfig(
-        host="",
-        port=0,
-        database="ticketing_platform.db",
+        host="localhost",
+        port=5433,
+        database="smadash",
         username= os.environ.get('USERNAME_SOURCE'),
         password=os.environ.get('PASSWORD_SOURCE'),
-        db_type=DatabaseType.SQLITE,
+        db_type=DatabaseType.POSTGRESQL,
         additional_params={
             'charset': 'utf8mb4',
             'pool_recycle': 3600
@@ -37,7 +50,7 @@ def main():
 
     # Test individual ingestor
     factory = DatabaseIngestorFactory()
-    ingestor = factory.create_ingestor(DatabaseType.POSTGRESQL)
+    ingestor = factory.create_ingestor(source_config.db_type)
 
     if ingestor.test_connection(source_config):
         print("✅ Connection test successful")

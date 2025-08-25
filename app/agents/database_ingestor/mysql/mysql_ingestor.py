@@ -11,14 +11,7 @@ class MySQLIngestor(DatabaseIngestorInterface):
 
     def connect(self, config: ConnectionConfig) -> bool:
         try:
-            self.connection = mysql.connector.connect(
-                host=config.host,
-                port=config.port,
-                database=config.database,
-                user=config.username,
-                password=config.password,
-                **(config.additional_params or {})
-            )
+            self.connection = mysql.connector.connect
             self.cursor = self.connection.cursor(dictionary=True)
             self.logger.info(f"Connected to MySQL database: {config.database}")
             return True
@@ -35,14 +28,7 @@ class MySQLIngestor(DatabaseIngestorInterface):
 
     def test_connection(self, config: ConnectionConfig) -> bool:
         try:
-            test_conn = mysql.connector.connect(
-                host=config.host,
-                port=config.port,
-                database=config.database,
-                user=config.username,
-                password=config.password,
-                **(config.additional_params or {})
-            )
+            test_conn = mysql.connector.connect
             test_conn.close()
             return True
         except mysql.connector.Error:

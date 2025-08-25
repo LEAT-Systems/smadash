@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from ..models. import DatabaseConnectionCreate
+from ..models. import
 from app.api.utils.dependencies import get_current_user
 from ..services.database_service import pull_schema
 from ..db.storage import database_connections_db

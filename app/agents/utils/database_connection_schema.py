@@ -14,11 +14,11 @@ class DatabaseType(Enum):
 @dataclass
 class ConnectionConfig:
     host: str
-    port: int
-    database: str
-    username: str
-    password: str
     db_type: DatabaseType
+    port: int = None
+    database: str = None
+    username: str = None
+    password: str = None
     additional_params: Optional[Dict[str, Any]] = None
 
 @dataclass
@@ -37,3 +37,11 @@ class NormalizationRule:
     column_name: str
     rule_type: str  # e.g., 'data_type_conversion', 'null_handling', 'constraint_validation'
     parameters: Dict[str, Any]
+
+# @dataclass
+class ColumnMetadata:
+    name: str
+    data_type: str
+    nullable: bool
+    default_value: Optional[str]
+    auto_increment: bool

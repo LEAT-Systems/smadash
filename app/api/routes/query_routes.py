@@ -5,7 +5,7 @@ from app.api.db.storage import database_connections_db
 from app.api.services.query_generator_service import generate_sql
 from sqlalchemy import create_engine
 
-router = APIRouter()
+router = APIRouter(tags=["query"], prefix="/query")
 
 @router.post("/query")
 def query_database(query_req: QueryRequest, current_user: dict = Depends(get_current_user)):

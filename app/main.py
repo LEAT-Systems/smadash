@@ -25,7 +25,7 @@ def create_application() -> FastAPI:
     )
 
     # Include routers
-    application.include_router(users.router, prefix=settings.API_V1_STR)
+    #application.include_router(users.router, prefix=settings.API_V1_STR)
     #application.include_router(items.router, prefix=settings.API_V1_STR)
 
     @application.get("/")

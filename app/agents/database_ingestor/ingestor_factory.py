@@ -1,6 +1,8 @@
 from app.agents.database_ingestor.interfaces import  DatabaseIngestorInterface
 from app.agents.utils.database_connection_schema import DatabaseType
-from .ingestor import SQLAlchemyIngestor
+from app.agents.database_ingestor.sql_alchemy.ingestor import SQLAlchemyIngestor
+from app.agents.database_ingestor.mongo_client.ingestor import MongoDBIngestor
+
 
 class DatabaseIngestorFactory:
     """Factory class for creating database ingestors."""
@@ -21,8 +23,7 @@ class DatabaseIngestorFactory:
 
         # For NoSQL databases, you would create specific ingestors
         elif db_type == DatabaseType.MONGODB:
-            # return MongoDBIngestor()  # To be implemented
-            raise NotImplementedError(f"MongoDB ingestor not yet implemented")
+            return MongoDBIngestor()  # To be implemented
 
         else:
             raise ValueError(f"Unsupported database type: {db_type}")

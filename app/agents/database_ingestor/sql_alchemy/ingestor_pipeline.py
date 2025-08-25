@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import logging
 from app.agents.database_ingestor.interfaces import DatabaseIngestionPipelineInterface, ConnectionConfig
-from .ingestor_factory import DatabaseIngestorFactory
+from app.agents.database_ingestor.ingestor_factory import DatabaseIngestorFactory
 from app.agents.utils.database_normalizer import DataNormalizer
 from app.agents.utils.database_connection_schema import DatabaseType
 
@@ -344,10 +344,10 @@ class DatabaseIngestionPipeline(DatabaseIngestionPipelineInterface):
                     "columns": [
                         {
                             "name": col["name"],
-                            "type": col["type"],
+                            "type": col["data_type"],
                             "nullable": col["nullable"],
                             "primary_key": col["name"] in table.primary_keys,
-                            "default": col.get("default")
+                            "default": col.get("default_value")
                         }
                         for col in table.columns
                     ],

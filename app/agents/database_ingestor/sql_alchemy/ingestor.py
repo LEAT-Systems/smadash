@@ -6,7 +6,8 @@ from typing import Dict, List, Optional, Any, Generator
 import logging
 from datetime import datetime
 from app.agents.database_ingestor.interfaces import DatabaseIngestorInterface, ConnectionConfig, TableMetadata
-from app.agents.utils.database_connection_schema import DatabaseType
+from app.agents.utils.database_connection_schema import DatabaseType, ColumnMetadata
+
 
 class SQLAlchemyIngestor(DatabaseIngestorInterface):
     def __init__(self):
@@ -109,7 +110,7 @@ class SQLAlchemyIngestor(DatabaseIngestorInterface):
 
         return tables
 
-    def get_table_metadata(self, table_name: str, schema: Optional[str] = None) -> TableMetadata:
+    def get_table_metadata(self, table_name: str,  schema: Optional[str] = None) -> TableMetadata:
         if not self.engine:
             raise RuntimeError("Not connected to database")
 
@@ -117,17 +118,16 @@ class SQLAlchemyIngestor(DatabaseIngestorInterface):
 
         # Get column information
         columns = []
-        column_info_list = inspector.get_columns(table_name, schema=schema)
-
+        column_info_list = inspector.get_columns(table_name)
         for col_info in column_info_list:
-            column_data = {
-                'name': col_info['name'],
-                'type': str(col_info['type']),
-                'nullable': col_info['nullable'],
-                'default': col_info['default'],
-                'autoincrement': col_info.get('autoincrement', False),
-                'comment': col_info.get('comment', '')
-            }
+            column_data = ColumnMetadata()
+            (column_data.name,) = col_info['name'],
+            (column_data.data_type,) = str(col_info['type']),
+            (column_data.nullable,) = col_info['nullable'],
+            (column_data.default_value,) = col_info['default'],
+            (column_data.auto_increment,) = col_info.get('autoincrement', False),
+
+
             columns.append(column_data)
 
         # Get primary keys

@@ -1,2 +1,1 @@
-from .ingestor_factory import DatabaseIngestorFactory
 from .ingestor_pipeline import DatabaseIngestionPipeline
