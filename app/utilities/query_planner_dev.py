@@ -62,24 +62,25 @@ You are a query planner assistant and builder. Your job is to:
 Use the following database schema:
 {db_schema}
 
-You must support the following operators:
-- "=" for exact match (e.g., field = 'value')
-- "between" for range filters (e.g., dates or numeric ranges)
-- "like" for partial matches (e.g., names or categories)
-- ">" and "<" for comparisons
-
 
 Additional instructions:
-- The SQL must be valid for {dialect}. Use {dialect}-specific syntax, data types, and functions where appropriate.
-- If using the "between" operator, the value must be a 2-element array: [start, end]
-- If using the "like" operator, wrap the value in % signs for partial match (e.g., '%phone%')
-- Always include a descriptive attribute like a name for primary and foreign keys, JOIN a different table if necessary
-- Output must be valid JSON only
-- Use only tables and fields from the schema above
-- Output the SQL statement as one statement
+- SQL must be valid for {dialect}.
+- Operators: "=", "between" (value = [start,end]), "like" (wrap with %), ">", "<".
+- **Display-field policy**
+  - The SELECT list MUST include at least one non-ID, human-readable text column for each entity displayed.
+  - Preferred display fields (in order): full_name, name, title, label, description, email, (first_name || ' ' || last_name), username.
+  - If none exist, choose the longest TEXT/VARCHAR column as a fallback and add a "warning".
+- **Join policy**
+  - When using a foreign key, JOIN the referenced table to fetch its display field.
+  - Use table aliases and readable column aliases.
+- **Prohibit**: SELECT *; results that contain only IDs.
+- **Validation checklist (the model must self-check before returning)**:
+  1) At least one non-ID text column is selected per entity.
+  2) All FKs shown have JOINs to pull display fields.
+  3) GROUP BY includes all non-aggregated selected columns (per {dialect} rules).
+  4) Only schema-listed tables/columns are used.
 
-
-Use this JSON format:
+Extend the JSON format with display choices:
 {{
   "query_plan": {{
     "intent": "ranking" | "trend" | "filter" | "comparison",
@@ -89,11 +90,18 @@ Use this JSON format:
     "group_by": [...],
     "sort": [ {{ "field": ..., "order": "asc" | "desc" }} ],
     "limit": ...,
+    "display_fields": {{
+      "customers": ["customer_name", "email"], 
+      "orders": ["order_date"]
+    }},
+    "joins": [
+      {{ "from_table": "orders", "from_key": "customer_id", "to_table": "customers", "to_key": "customer_id", "type": "INNER" }}
+    ],
     "original_user_query": ...
   }},
-  "sql": "SELECT ... FROM ... JOIN ..."
+  "sql": "SELECT ... FROM ... JOIN ...",
+  "warning": "Only IDs available in table X; used column Y as fallback"
 }}
-
 
 Only return valid JSON output.
 """
@@ -127,7 +135,7 @@ def get_plan_and_sql(system_prompt: str, user_query: str, model: str = "gpt-4o-m
 def main():
     parser = argparse.ArgumentParser(description="Query Planner CLI")
     parser.add_argument("query", type=str, nargs="?", help="Natural language query to convert into SQL")
-    parser.add_argument("--schema", type=str, default="db_schema_moc.json",
+    parser.add_argument("--schema", type=str, default="/Users/mac/Documents/Projects/SMADASH/db_schema_moc.json",
                         help="Path to schema file (JSON or CSV)")
     parser.add_argument("--dialect", type=str, default="SQLite3", help="SQL dialect")
     args = parser.parse_args()
