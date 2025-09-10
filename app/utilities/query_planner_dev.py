@@ -103,7 +103,7 @@ Extend the JSON format with display choices:
   "warning": "Only IDs available in table X; used column Y as fallback"
 }}
 
-Only return valid JSON output.
+Only return valid JSON output without the word json.
 """
 
 
@@ -135,7 +135,7 @@ def get_plan_and_sql(system_prompt: str, user_query: str, model: str = "gpt-4o-m
 def main():
     parser = argparse.ArgumentParser(description="Query Planner CLI")
     parser.add_argument("query", type=str, nargs="?", help="Natural language query to convert into SQL")
-    parser.add_argument("--schema", type=str, default="/Users/mac/Documents/Projects/SMADASH/db_schema_moc.json",
+    parser.add_argument("--schema", type=str, default="db_schema_moc.json",
                         help="Path to schema file (JSON or CSV)")
     parser.add_argument("--dialect", type=str, default="SQLite3", help="SQL dialect")
     args = parser.parse_args()
@@ -163,6 +163,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
