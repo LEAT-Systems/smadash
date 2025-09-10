@@ -1,0 +1,699 @@
+{
+  "database_name": "ticketing_platform.db",
+  "database_type": "sqlite",
+  "generated_at": "2025-08-01T16:10:47.892892",
+  "relationships": [
+    {
+      "from_column": "user_id",
+      "from_table": "CheckIns",
+      "relationship_type": "foreign_key",
+      "to_column": "user_id",
+      "to_table": "Users"
+    },
+    {
+      "from_column": "event_id",
+      "from_table": "CheckIns",
+      "relationship_type": "foreign_key",
+      "to_column": "event_id",
+      "to_table": "Events"
+    },
+    {
+      "from_column": "sale_id",
+      "from_table": "CheckIns",
+      "relationship_type": "foreign_key",
+      "to_column": "sale_id",
+      "to_table": "Sales"
+    },
+    {
+      "from_column": "category_id",
+      "from_table": "Events",
+      "relationship_type": "foreign_key",
+      "to_column": "category_id",
+      "to_table": "EventCategories"
+    },
+    {
+      "from_column": "venue_id",
+      "from_table": "Events",
+      "relationship_type": "foreign_key",
+      "to_column": "venue_id",
+      "to_table": "Venues"
+    },
+    {
+      "from_column": "vendor_id",
+      "from_table": "Events",
+      "relationship_type": "foreign_key",
+      "to_column": "vendor_id",
+      "to_table": "Vendors"
+    },
+    {
+      "from_column": "ticket_id",
+      "from_table": "Sales",
+      "relationship_type": "foreign_key",
+      "to_column": "ticket_id",
+      "to_table": "Tickets"
+    },
+    {
+      "from_column": "event_id",
+      "from_table": "Sales",
+      "relationship_type": "foreign_key",
+      "to_column": "event_id",
+      "to_table": "Events"
+    },
+    {
+      "from_column": "user_id",
+      "from_table": "Sales",
+      "relationship_type": "foreign_key",
+      "to_column": "user_id",
+      "to_table": "Users"
+    },
+    {
+      "from_column": "event_id",
+      "from_table": "Tickets",
+      "relationship_type": "foreign_key",
+      "to_column": "event_id",
+      "to_table": "Events"
+    }
+  ],
+  "table_count": 8,
+  "tables": [
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "check_in_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "sale_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "event_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "user_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "check_in_time",
+          "nullable": false,
+          "primary_key": false,
+          "type": "DATETIME"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "constrained_columns": [
+            "user_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "user_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Users"
+        },
+        {
+          "constrained_columns": [
+            "event_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "event_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Events"
+        },
+        {
+          "constrained_columns": [
+            "sale_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "sale_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Sales"
+        }
+      ],
+      "indexes": [
+        
+      ],
+      "name": "CheckIns",
+      "primary_keys": [
+        "check_in_id"
+      ],
+      "row_count": 0,
+      "schema": null
+    },
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "category_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "category_name",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "description",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        
+      ],
+      "indexes": [
+        
+      ],
+      "name": "EventCategories",
+      "primary_keys": [
+        "category_id"
+      ],
+      "row_count": 10,
+      "schema": null
+    },
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "event_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "event_name",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "event_date",
+          "nullable": false,
+          "primary_key": false,
+          "type": "DATETIME"
+        },
+        {
+          "default": null,
+          "name": "description",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "vendor_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "venue_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "category_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "constrained_columns": [
+            "category_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "category_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "EventCategories"
+        },
+        {
+          "constrained_columns": [
+            "venue_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "venue_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Venues"
+        },
+        {
+          "constrained_columns": [
+            "vendor_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "vendor_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Vendors"
+        }
+      ],
+      "indexes": [
+        
+      ],
+      "name": "Events",
+      "primary_keys": [
+        "event_id"
+      ],
+      "row_count": 50,
+      "schema": null
+    },
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "sale_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "user_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "event_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "ticket_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "quantity_purchased",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "total_price",
+          "nullable": false,
+          "primary_key": false,
+          "type": "REAL"
+        },
+        {
+          "default": null,
+          "name": "purchase_date",
+          "nullable": false,
+          "primary_key": false,
+          "type": "DATETIME"
+        },
+        {
+          "default": null,
+          "name": "transaction_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "constrained_columns": [
+            "ticket_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "ticket_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Tickets"
+        },
+        {
+          "constrained_columns": [
+            "event_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "event_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Events"
+        },
+        {
+          "constrained_columns": [
+            "user_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "user_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Users"
+        }
+      ],
+      "indexes": [
+        
+      ],
+      "name": "Sales",
+      "primary_keys": [
+        "sale_id"
+      ],
+      "row_count": 8688,
+      "schema": null
+    },
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "ticket_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "event_id",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "ticket_type",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "price",
+          "nullable": false,
+          "primary_key": false,
+          "type": "REAL"
+        },
+        {
+          "default": null,
+          "name": "quantity_available",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "constrained_columns": [
+            "event_id"
+          ],
+          "name": null,
+          "referred_columns": [
+            "event_id"
+          ],
+          "referred_schema": null,
+          "referred_table": "Events"
+        }
+      ],
+      "indexes": [
+        
+      ],
+      "name": "Tickets",
+      "primary_keys": [
+        "ticket_id"
+      ],
+      "row_count": 139,
+      "schema": null
+    },
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "user_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "first_name",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "last_name",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "email",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "password_hash",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "registration_date",
+          "nullable": false,
+          "primary_key": false,
+          "type": "DATETIME"
+        },
+        {
+          "default": null,
+          "name": "last_login",
+          "nullable": true,
+          "primary_key": false,
+          "type": "DATETIME"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        
+      ],
+      "indexes": [
+        
+      ],
+      "name": "Users",
+      "primary_keys": [
+        "user_id"
+      ],
+      "row_count": 200,
+      "schema": null
+    },
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "vendor_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "vendor_name",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "contact_email",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "contact_phone",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "registered_date",
+          "nullable": false,
+          "primary_key": false,
+          "type": "DATETIME"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        
+      ],
+      "indexes": [
+        
+      ],
+      "name": "Vendors",
+      "primary_keys": [
+        "vendor_id"
+      ],
+      "row_count": 15,
+      "schema": null
+    },
+    {
+      "columns": [
+        {
+          "default": null,
+          "name": "venue_id",
+          "nullable": true,
+          "primary_key": true,
+          "type": "INTEGER"
+        },
+        {
+          "default": null,
+          "name": "venue_name",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "address",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "city",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "state",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "zip_code",
+          "nullable": false,
+          "primary_key": false,
+          "type": "TEXT"
+        },
+        {
+          "default": null,
+          "name": "capacity",
+          "nullable": false,
+          "primary_key": false,
+          "type": "INTEGER"
+        },
+        {
+          "default": "CURRENT_TIMESTAMP",
+          "name": "created_at",
+          "nullable": true,
+          "primary_key": false,
+          "type": "TIMESTAMP"
+        }
+      ],
+      "foreign_keys": [
+        
+      ],
+      "indexes": [
+        
+      ],
+      "name": "Venues",
+      "primary_keys": [
+        "venue_id"
+      ],
+      "row_count": 25,
+      "schema": null
+    }
+  ]
+}
