@@ -1,0 +1,631 @@
+[
+  {
+    "query": "Show me all users with example.org email addresses.",
+    "result": {
+      "query_plan": {
+        "intent": "filter",
+        "collection": "Users",
+        "pipeline_steps": [
+          {
+            "stage": "$match",
+            "expression": {
+              "email": {
+                "$regex": "@example\\.org$"
+              }
+            }
+          }
+        ],
+        "joins": [],
+        "display_fields": [
+          "first_name",
+          "last_name",
+          "email"
+        ],
+        "original_user_query": "Show me all users with example.org email addresses."
+      },
+      "mongo_query": [
+        {
+          "$match": {
+            "email": {
+              "$regex": "@example\\.org$"
+            }
+          }
+        },
+        {
+          "$project": {
+            "first_name": 1,
+            "last_name": 1,
+            "email": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "List all events happening in the next 30 days.",
+    "result": {
+      "error": "Invalid JSON returned",
+      "raw_output": "{\n  \"query_plan\": {\n    \"intent\": \"aggregation\",\n    \"collection\": \"Events\",\n    \"pipeline_steps\": [\n      { \"stage\": \"$match\", \"expression\": { \"event_date\": { \"$gte\": new Date(), \"$lt\": new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000) } } },\n      { \"stage\": \"$sort\", \"expression\": { \"event_date\": 1 } }\n    ],\n    \"joins\": [],\n    \"display_fields\": [\"event_name\", \"event_date\", \"description\"],\n    \"original_user_query\": \"List all events happening in the next 30 days.\"\n  },\n  \"mongo_query\": [\n    { \"$match\": { \"event_date\": { \"$gte\": new Date(), \"$lt\": new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000) } } },\n    { \"$sort\": { \"event_date\": 1 } }\n  ]\n}"
+    }
+  },
+  {
+    "query": "Find all tickets for the event \"Realigned systematic matrix.\"",
+    "result": {
+      "query_plan": {
+        "intent": "lookup",
+        "collection": "Tickets",
+        "pipeline_steps": [
+          {
+            "stage": "$match",
+            "expression": {
+              "event_id": {
+                "$in": []
+              }
+            }
+          },
+          {
+            "stage": "$lookup",
+            "expression": {
+              "from": "Events",
+              "localField": "event_id",
+              "foreignField": "_id",
+              "as": "event_details"
+            }
+          },
+          {
+            "stage": "$unwind",
+            "expression": {
+              "path": "$event_details"
+            }
+          },
+          {
+            "stage": "$match",
+            "expression": {
+              "event_details.event_name": "Realigned systematic matrix"
+            }
+          }
+        ],
+        "joins": [
+          {
+            "from": "Events",
+            "localField": "event_id",
+            "foreignField": "_id",
+            "as": "event_details"
+          }
+        ],
+        "display_fields": [
+          "event_details.event_name",
+          "ticket_type",
+          "price",
+          "quantity_available"
+        ],
+        "original_user_query": "Find all tickets for the event 'Realigned systematic matrix.'"
+      },
+      "mongo_query": [
+        {
+          "$lookup": {
+            "from": "Events",
+            "localField": "event_id",
+            "foreignField": "_id",
+            "as": "event_details"
+          }
+        },
+        {
+          "$unwind": {
+            "path": "$event_details"
+          }
+        },
+        {
+          "$match": {
+            "event_details.event_name": "Realigned systematic matrix"
+          }
+        },
+        {
+          "$project": {
+            "event_name": "$event_details.event_name",
+            "ticket_type": 1,
+            "price": 1,
+            "quantity_available": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "Give me a list of all vendors and their contact emails.",
+    "result": {
+      "query_plan": {
+        "intent": "aggregation",
+        "collection": "Vendors",
+        "pipeline_steps": [
+          {
+            "stage": "$project",
+            "expression": {
+              "vendor_name": 1,
+              "contact_email": 1
+            }
+          }
+        ],
+        "joins": [],
+        "display_fields": [
+          "vendor_name",
+          "contact_email"
+        ],
+        "original_user_query": "Give me a list of all vendors and their contact emails."
+      },
+      "mongo_query": [
+        {
+          "$project": {
+            "vendor_name": 1,
+            "contact_email": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "Show me all sales made in the last 7 days.",
+    "result": {
+      "error": "Invalid JSON returned",
+      "raw_output": "{\n  \"query_plan\": {\n    \"intent\": \"aggregation\",\n    \"collection\": \"Sales\",\n    \"pipeline_steps\": [\n      { \"stage\": \"$match\", \"expression\": { \"purchase_date\": { \"$gte\": { \"$subtract\": [new Date(), 7 * 24 * 60 * 60 * 1000] } } } },\n      { \"stage\": \"$lookup\", \"expression\": { \"from\": \"Users\", \"localField\": \"user_id\", \"foreignField\": \"_id\", \"as\": \"user\" } },\n      { \"stage\": \"$lookup\", \"expression\": { \"from\": \"Events\", \"localField\": \"event_id\", \"foreignField\": \"_id\", \"as\": \"event\" } },\n      { \"stage\": \"$project\", \"expression\": { \"user_id\": 1, \"event_id\": 1, \"quantity_purchased\": 1, \"total_price\": 1, \"purchase_date\": 1, \"user_name\": { \"$concat\": [{ \"$arrayElemAt\": [\"$user.first_name\", 0] }, \" \", { \"$arrayElemAt\": [\"$user.last_name\", 0] }] }, \"event_name\": { \"$arrayElemAt\": [\"$event.event_name\", 0] } } },\n      { \"stage\": \"$sort\", \"expression\": { \"purchase_date\": -1 } }\n    ],\n    \"joins\": [\n      {\n        \"from\": \"Users\",\n        \"localField\": \"user_id\",\n        \"foreignField\": \"_id\",\n        \"as\": \"user\"\n      },\n      {\n        \"from\": \"Events\",\n        \"localField\": \"event_id\",\n        \"foreignField\": \"_id\",\n        \"as\": \"event\"\n      }\n    ],\n    \"display_fields\": [\"user_name\", \"event_name\", \"quantity_purchased\", \"total_price\", \"purchase_date\"],\n    \"original_user_query\": \"Show me all sales made in the last 7 days.\"\n  },\n  \"mongo_query\": [\n    { \"$match\": { \"purchase_date\": { \"$gte\": { \"$subtract\": [new Date(), 7 * 24 * 60 * 60 * 1000] } } } },\n    { \"$lookup\": { \"from\": \"Users\", \"localField\": \"user_id\", \"foreignField\": \"_id\", \"as\": \"user\" } },\n    { \"$lookup\": { \"from\": \"Events\", \"localField\": \"event_id\", \"foreignField\": \"_id\", \"as\": \"event\" } },\n    { \"$project\": { \"user_id\": 1, \"event_id\": 1, \"quantity_purchased\": 1, \"total_price\": 1, \"purchase_date\": 1, \"user_name\": { \"$concat\": [{ \"$arrayElemAt\": [\"$user.first_name\", 0] }, \" \", { \"$arrayElemAt\": [\"$user.last_name\", 0] }] }, \"event_name\": { \"$arrayElemAt\": [\"$event.event_name\", 0] } } },\n    { \"$sort\": { \"purchase_date\": -1 } }\n  ]\n}"
+    }
+  },
+  {
+    "query": "How many tickets were sold for each event?",
+    "result": {
+      "query_plan": {
+        "intent": "aggregation",
+        "collection": "Tickets",
+        "pipeline_steps": [
+          {
+            "stage": "$lookup",
+            "expression": {
+              "from": "Events",
+              "localField": "event_id",
+              "foreignField": "_id",
+              "as": "event_details"
+            }
+          },
+          {
+            "stage": "$group",
+            "expression": {
+              "_id": "$event_id",
+              "total_tickets_sold": {
+                "$sum": "$quantity_available"
+              }
+            }
+          },
+          {
+            "stage": "$lookup",
+            "expression": {
+              "from": "Events",
+              "localField": "_id",
+              "foreignField": "_id",
+              "as": "event_info"
+            }
+          },
+          {
+            "stage": "$project",
+            "expression": {
+              "event_name": {
+                "$arrayElemAt": [
+                  "$event_info.event_name",
+                  0
+                ]
+              },
+              "total_tickets_sold": 1
+            }
+          }
+        ],
+        "joins": [
+          {
+            "from": "Events",
+            "localField": "event_id",
+            "foreignField": "_id",
+            "as": "event_details"
+          }
+        ],
+        "display_fields": [
+          "event_name",
+          "total_tickets_sold"
+        ],
+        "original_user_query": "How many tickets were sold for each event?"
+      },
+      "mongo_query": [
+        {
+          "$lookup": {
+            "from": "Events",
+            "localField": "event_id",
+            "foreignField": "_id",
+            "as": "event_details"
+          }
+        },
+        {
+          "$group": {
+            "_id": "$event_id",
+            "total_tickets_sold": {
+              "$sum": "$quantity_available"
+            }
+          }
+        },
+        {
+          "$lookup": {
+            "from": "Events",
+            "localField": "_id",
+            "foreignField": "_id",
+            "as": "event_info"
+          }
+        },
+        {
+          "$project": {
+            "event_name": {
+              "$arrayElemAt": [
+                "$event_info.event_name",
+                0
+              ]
+            },
+            "total_tickets_sold": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "Show me all events with their venue details.",
+    "result": {
+      "query_plan": {
+        "intent": "lookup",
+        "collection": "Events",
+        "pipeline_steps": [
+          {
+            "stage": "$lookup",
+            "expression": {
+              "from": "Venues",
+              "localField": "venue_id",
+              "foreignField": "_id",
+              "as": "venue_details"
+            }
+          },
+          {
+            "stage": "$unwind",
+            "expression": {
+              "path": "$venue_details",
+              "preserveNullAndEmptyArrays": true
+            }
+          }
+        ],
+        "joins": [
+          {
+            "from": "Venues",
+            "localField": "venue_id",
+            "foreignField": "_id",
+            "as": "venue_details"
+          }
+        ],
+        "display_fields": [
+          "event_name",
+          "event_date",
+          "venue_details.venue_name",
+          "venue_details.address",
+          "venue_details.city",
+          "venue_details.state"
+        ],
+        "original_user_query": "Show me all events with their venue details."
+      },
+      "mongo_query": [
+        {
+          "$lookup": {
+            "from": "Venues",
+            "localField": "venue_id",
+            "foreignField": "_id",
+            "as": "venue_details"
+          }
+        },
+        {
+          "$unwind": {
+            "path": "$venue_details",
+            "preserveNullAndEmptyArrays": true
+          }
+        },
+        {
+          "$project": {
+            "event_name": 1,
+            "event_date": 1,
+            "venue_name": "$venue_details.venue_name",
+            "address": "$venue_details.address",
+            "city": "$venue_details.city",
+            "state": "$venue_details.state"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "Who are the top 5 users that bought the most tickets?",
+    "result": {
+      "query_plan": {
+        "intent": "aggregation",
+        "collection": "Sales",
+        "pipeline_steps": [
+          {
+            "stage": "$group",
+            "expression": {
+              "_id": "$user_id",
+              "total_tickets": {
+                "$sum": "$quantity_purchased"
+              }
+            }
+          },
+          {
+            "stage": "$sort",
+            "expression": {
+              "total_tickets": -1
+            }
+          },
+          {
+            "stage": "$limit",
+            "expression": 5
+          }
+        ],
+        "joins": [
+          {
+            "from": "Users",
+            "localField": "_id",
+            "foreignField": "_id",
+            "as": "user_info"
+          }
+        ],
+        "display_fields": [
+          "user_info.first_name",
+          "user_info.last_name",
+          "total_tickets"
+        ],
+        "original_user_query": "Who are the top 5 users that bought the most tickets?"
+      },
+      "mongo_query": [
+        {
+          "$group": {
+            "_id": "$user_id",
+            "total_tickets": {
+              "$sum": "$quantity_purchased"
+            }
+          }
+        },
+        {
+          "$sort": {
+            "total_tickets": -1
+          }
+        },
+        {
+          "$limit": 5
+        },
+        {
+          "$lookup": {
+            "from": "Users",
+            "localField": "_id",
+            "foreignField": "_id",
+            "as": "user_info"
+          }
+        },
+        {
+          "$project": {
+            "first_name": {
+              "$arrayElemAt": [
+                "$user_info.first_name",
+                0
+              ]
+            },
+            "last_name": {
+              "$arrayElemAt": [
+                "$user_info.last_name",
+                0
+              ]
+            },
+            "total_tickets": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "What is the total revenue generated per event?",
+    "result": {
+      "query_plan": {
+        "intent": "aggregation",
+        "collection": "Sales",
+        "pipeline_steps": [
+          {
+            "stage": "$group",
+            "expression": {
+              "_id": "$event_id",
+              "total_revenue": {
+                "$sum": "$total_price"
+              }
+            }
+          },
+          {
+            "stage": "$lookup",
+            "expression": {
+              "from": "Events",
+              "localField": "_id",
+              "foreignField": "_id",
+              "as": "event_details"
+            }
+          },
+          {
+            "stage": "$unwind",
+            "expression": "$event_details"
+          },
+          {
+            "stage": "$project",
+            "expression": {
+              "event_name": "$event_details.event_name",
+              "total_revenue": 1
+            }
+          }
+        ],
+        "joins": [
+          {
+            "from": "Events",
+            "localField": "_id",
+            "foreignField": "_id",
+            "as": "event_details"
+          }
+        ],
+        "display_fields": [
+          "event_name",
+          "total_revenue"
+        ],
+        "original_user_query": "What is the total revenue generated per event?"
+      },
+      "mongo_query": [
+        {
+          "$group": {
+            "_id": "$event_id",
+            "total_revenue": {
+              "$sum": "$total_price"
+            }
+          }
+        },
+        {
+          "$lookup": {
+            "from": "Events",
+            "localField": "_id",
+            "foreignField": "_id",
+            "as": "event_details"
+          }
+        },
+        {
+          "$unwind": "$event_details"
+        },
+        {
+          "$project": {
+            "event_name": "$event_details.event_name",
+            "total_revenue": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "List all events that have sold fewer than 5 tickets.",
+    "result": {
+      "query_plan": {
+        "intent": "aggregation",
+        "collection": "Events",
+        "pipeline_steps": [
+          {
+            "stage": "$lookup",
+            "expression": {
+              "from": "Tickets",
+              "localField": "_id",
+              "foreignField": "event_id",
+              "as": "tickets"
+            }
+          },
+          {
+            "stage": "$unwind",
+            "expression": {
+              "path": "$tickets",
+              "preserveNullAndEmptyArrays": true
+            }
+          },
+          {
+            "stage": "$lookup",
+            "expression": {
+              "from": "Sales",
+              "localField": "tickets._id",
+              "foreignField": "ticket_id",
+              "as": "sales"
+            }
+          },
+          {
+            "stage": "$group",
+            "expression": {
+              "_id": "$_id",
+              "event_name": {
+                "$first": "$event_name"
+              },
+              "total_tickets_sold": {
+                "$sum": {
+                  "$sum": "$sales.quantity_purchased"
+                }
+              }
+            }
+          },
+          {
+            "stage": "$match",
+            "expression": {
+              "total_tickets_sold": {
+                "$lt": 5
+              }
+            }
+          }
+        ],
+        "joins": [
+          {
+            "from": "Tickets",
+            "localField": "_id",
+            "foreignField": "event_id",
+            "as": "tickets"
+          },
+          {
+            "from": "Sales",
+            "localField": "tickets._id",
+            "foreignField": "ticket_id",
+            "as": "sales"
+          }
+        ],
+        "display_fields": [
+          "event_name",
+          "total_tickets_sold"
+        ],
+        "original_user_query": "List all events that have sold fewer than 5 tickets."
+      },
+      "mongo_query": [
+        {
+          "$lookup": {
+            "from": "Tickets",
+            "localField": "_id",
+            "foreignField": "event_id",
+            "as": "tickets"
+          }
+        },
+        {
+          "$unwind": {
+            "path": "$tickets",
+            "preserveNullAndEmptyArrays": true
+          }
+        },
+        {
+          "$lookup": {
+            "from": "Sales",
+            "localField": "tickets._id",
+            "foreignField": "ticket_id",
+            "as": "sales"
+          }
+        },
+        {
+          "$group": {
+            "_id": "$_id",
+            "event_name": {
+              "$first": "$event_name"
+            },
+            "total_tickets_sold": {
+              "$sum": {
+                "$sum": "$sales.quantity_purchased"
+              }
+            }
+          }
+        },
+        {
+          "$match": {
+            "total_tickets_sold": {
+              "$lt": 5
+            }
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,82 @@
+{
+  "collections": {
+    "Users": {
+      "_id": "ObjectId",
+      "first_name": "string",
+      "last_name": "string",
+      "email": "string",
+      "password_hash": "string",
+      "registration_date": "date",
+      "last_login": "date|null",
+      "created_at": "date"
+    },
+
+    "Events": {
+      "_id": "ObjectId",
+      "event_name": "string",
+      "event_date": "date",
+      "description": "string|null",
+      "vendor_id": "ObjectId -> Vendors._id",
+      "venue_id": "ObjectId -> Venues._id",
+      "category_id": "ObjectId -> EventCategories._id",
+      "created_at": "date"
+    },
+
+    "EventCategories": {
+      "_id": "ObjectId",
+      "category_name": "string",
+      "description": "string|null",
+      "created_at": "date"
+    },
+
+    "Venues": {
+      "_id": "ObjectId",
+      "venue_name": "string",
+      "address": "string",
+      "city": "string",
+      "state": "string",
+      "zip_code": "string",
+      "capacity": "int",
+      "created_at": "date"
+    },
+
+    "Vendors": {
+      "_id": "ObjectId",
+      "vendor_name": "string",
+      "contact_email": "string",
+      "contact_phone": "string|null",
+      "registered_date": "date",
+      "created_at": "date"
+    },
+
+    "Tickets": {
+      "_id": "ObjectId",
+      "event_id": "ObjectId -> Events._id",
+      "ticket_type": "string",
+      "price": "double",
+      "quantity_available": "int",
+      "created_at": "date"
+    },
+
+    "Sales": {
+      "_id": "ObjectId",
+      "user_id": "ObjectId -> Users._id",
+      "event_id": "ObjectId -> Events._id",
+      "ticket_id": "ObjectId -> Tickets._id",
+      "quantity_purchased": "int",
+      "total_price": "double",
+      "purchase_date": "date",
+      "transaction_id": "string",
+      "created_at": "date"
+    },
+
+    "CheckIns": {
+      "_id": "ObjectId",
+      "sale_id": "ObjectId -> Sales._id",
+      "event_id": "ObjectId -> Events._id",
+      "user_id": "ObjectId -> Users._id",
+      "check_in_time": "date",
+      "created_at": "date"
+    }
+  }
+}
