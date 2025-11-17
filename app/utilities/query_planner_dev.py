@@ -1,4 +1,25 @@
 """
+DEPRECATED: This file is deprecated in favor of the new multi-datasource query engine.
+
+Please use the new architecture at: app/agents/query_engine/
+
+New features:
+- Multi-datasource support (SQL databases via SQLAlchemy, MongoDB, and more)
+- Modular architecture with clear interfaces
+- Built-in query execution
+- Caching and optimization
+- Better error handling and logging
+
+Migration guide: See /MIGRATION_GUIDE.md
+
+For new code, use:
+    from app.agents.query_engine import QueryEngineFactory
+    generator, executor = QueryEngineFactory.create_query_engine(DatabaseType.POSTGRESQL)
+
+---
+
+OLD IMPLEMENTATION (kept for reference):
+
 Query Planner and Generator Script
 
 Features:

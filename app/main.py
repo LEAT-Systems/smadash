@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import users
-from api.utils.config import settings
-from api.db.database import instantiate_db
+from app.api.utils.config import settings
+from app.api.db.database import instantiate_db
+from app.api.routes import datasource_routes
 
 def create_application() -> FastAPI:
     """Create FastAPI application."""
@@ -25,13 +25,25 @@ def create_application() -> FastAPI:
     )
 
     # Include routers
-    #application.include_router(users.router, prefix=settings.API_V1_STR)
-    #application.include_router(items.router, prefix=settings.API_V1_STR)
+    application.include_router(
+        datasource_routes.router, 
+        prefix=f"{settings.API_V1_STR}/datasources",
+        tags=["datasources"]
+    )
 
     @application.get("/")
     def root():
         """Root endpoint."""
-        return {"message": "Welcome to Modular FastAPI Project!"}
+        return {"message": "Welcome to DataFlow Query Engine!"}
+    
+    @application.get("/health")
+    def health():
+        """Health check endpoint."""
+        return {
+            "status": "healthy",
+            "service": "query-engine",
+            "version": settings.VERSION
+        }
 
     return application
 

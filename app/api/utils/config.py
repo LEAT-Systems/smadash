@@ -1,8 +1,11 @@
 import os
+from pathlib import Path
 from typing import List
 from dotenv import load_dotenv
 
-load_dotenv()
+# Ensure we load the shared project .env even when running from the smadash package
+BASE_DIR = Path(__file__).resolve().parents[4]
+load_dotenv(BASE_DIR / ".env")
 
 
 class Settings:
@@ -23,9 +26,10 @@ class Settings:
             "http://localhost:8080",  # Vue.js frontend default
         ]
 
-        # Database configuration
-        self.DATABASE_URL: str = os.getenv(
-            "DATABASE_URL"
+        # Database configuration (prefer dedicated query engine DB, fallback to shared DATABASE_URL)
+        self.DATABASE_URL: str = (
+            os.getenv("QUERY_ENGINE_DATABASE_URL")
+            or os.getenv("DATABASE_URL")
         )
 
         # Security
